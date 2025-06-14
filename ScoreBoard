@@ -1,10 +1,10 @@
 import java.util.*;
 
 class ScoreBoard {
-
     private TreeMap<Integer,ArrayList<String>> winTree = new TreeMap<>();//podre poner una lista de string
     private HashMap<String,Player> player = new HashMap();
     private int playedGame = 0;
+
     // gran fallo de este comando es que no se pueden obtener valores repetidos en el caso de que no se ocupara una lista
     
     ScoreBoard(){}
@@ -36,8 +36,8 @@ class ScoreBoard {
 
     public void registerPlayer(String playerName){
         if(!checkPlayer(playerName)){
-            Player newPLayer = new Player(playerName);
-            player.put(playerName, newPLayer);
+            Player newPlayer = new Player(playerName);
+            player.put(playerName, newPlayer);
             winTree.putIfAbsent(0,new ArrayList<>());//
             winTree.get(0).add(playerName); //
         }else{
@@ -49,25 +49,21 @@ class ScoreBoard {
         return player.containsKey(playerName);
     }
 
-    public Player[] winRange(int lo, int hi) {
-        
-        if (lo < hi) {
-            System.out.println("Error de intervalos, lo > hi");
+    public Player[] winRange(int minWins, int maxWins) {
+        if (minWins < maxWins) {
+            System.out.println("Error de intervalos, minWins > maxWins");
             return new Player[0];
         }
-        
         ArrayList<Player> result = new ArrayList<>();
-        NavigableMap<Integer, ArrayList<String>> sub = winTree.descendingMap();//para buscar de mayor a menor
-        //explicar bien el mapa
-        for (Map.Entry<Integer, ArrayList<String>> entry : sub.entrySet()) {//entryset?
+        Map<Integer, ArrayList<String>> sub = winTree;
+        for (Map.Entry<Integer, ArrayList<String>> entry : sub.entrySet()) {
             int wins = entry.getKey();
-            if (wins <= lo && wins >= hi) {
+            if (wins <= minWins && wins >= maxWins) {
                 for (String name : entry.getValue()) {
                     result.add(player.get(name));
                 }
             }
         }
-
         return result.toArray(new Player[0]);
     }
 
@@ -80,6 +76,12 @@ class ScoreBoard {
         return result;
     }
 
+    private void addToWinTree(Player p) {
+        int wins = p.getWins();
+        winTree.putIfAbsent(wins, new ArrayList<>());
+        winTree.get(wins).add(p.getPlayerName());
+    }
+
     private void removeFromWinTree(Player p) {
         int wins = p.getWins();
         ArrayList<String> list = winTree.get(wins);
@@ -90,13 +92,6 @@ class ScoreBoard {
             }
         }
     }
-
-    private void addToWinTree(Player p) {
-        int wins = p.getWins();
-        winTree.putIfAbsent(wins, new ArrayList<>());
-        winTree.get(wins).add(p.getPlayerName());
-    }
-
 
     public void printPlayers() {
         for (Player p : player.values()) {
