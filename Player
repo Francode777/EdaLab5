@@ -5,13 +5,26 @@ public class Player {
     private int draws = 0;
     private int losses = 0;
 
-    Player(String playerName, int wins, int draws, int losses) {
+    Player(String playerName) {
         this.playerName = playerName;
         this.wins = wins;
         this.draws = draws;
         this.losses = losses;
     }
     Player(){}
+
+    public String getPlayerName() {
+        return playerName;
+    }
+    public int getWins() {
+        return wins;
+    }
+    public int getDraws() {
+        return draws;
+    }
+    public int getLosses() {
+        return losses;
+    }
 
     public void addWin(){
         wins++;
@@ -32,4 +45,6 @@ public class Player {
     }
 
 
+
 }
+
