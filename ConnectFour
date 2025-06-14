@@ -1,0 +1,26 @@
+public class ConnectFour { ///agregue este metodo de la tabla pq sirve para Game
+
+    private char[][] tabla;
+
+    public ConnectFour() {
+        tabla = new char[7][6];
+        for (int col = 0; col < 7; col++) {
+            for (int fila = 0; fila < 6; fila++) {
+                tabla[col][fila] = ' ';
+            }
+        }
+    }
+
+    public void mostrarTabla() {
+        for (int fila = 0; fila < 6; fila++) {
+            System.out.print("|");
+            for (int col = 0; col < 7; col++) {
+                System.out.print(tabla[col][fila]);
+                System.out.print("|");
+            }
+            System.out.println();
+        }
+        System.out.println("---------------");
+        System.out.println(" 0 1 2 3 4 5 6");
+    }
+}
