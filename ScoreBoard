@@ -1,11 +1,14 @@
 import java.util.*;
 
-public class ScoreBoard {
+class ScoreBoard {
 
     private TreeMap<Integer,ArrayList<String>> winTree = new TreeMap<>();//podre poner una lista de string
     private HashMap<String,Player> player = new HashMap();
     private int playedGame = 0;
     // gran fallo de este comando es que no se pueden obtener valores repetidos en el caso de que no se ocupara una lista
+    
+    ScoreBoard(){}
+    
     public void addGameResult(String winnerPlayerName, String lossPlayerName, boolean draw){
 
         registerPlayer(winnerPlayerName);
@@ -82,6 +85,33 @@ public class ScoreBoard {
     }
 
 
+    public void printPlayers() {
+        for (Player p : player.values()) {
+            System.out.println(p.getPlayerName() + " → Wins: " + p.getWins() + ", Draws: " + p.getDraws() + ", Losses: " + p.getLosses());
+        }
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        ScoreBoard scoreboard = new ScoreBoard();
 
+        scoreboard.addGameResult("Alice", "Bob", false);    // Alice gana
+        scoreboard.addGameResult("Alice", "Charlie", true); // Empate
+        scoreboard.addGameResult("Bob", "Charlie", false);  // Bob gana
+        scoreboard.addGameResult("Alice", "Bob", false);    // Alice gana de nuevo
+        scoreboard.addGameResult("Charlie", "Bob", false);  // Charlie gana
 
+        System.out.println("\nJugadores con entre 1 y 2 victorias:");
+        for (String name : scoreboard.winRange(1, 2)) {
+            System.out.println("- " + name);
+        }
+
+        System.out.println("\nJugadores con más victorias que 1:");
+        for (String name : scoreboard.winSuccessor(1)) {
+            System.out.println("- " + name);
+        }
+
+        System.out.println("\nEstado completo del ScoreBoard:");
+        scoreboard.printPlayers();
+    }
 }
