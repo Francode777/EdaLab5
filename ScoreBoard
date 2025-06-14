@@ -49,13 +49,20 @@ class ScoreBoard {
         return player.containsKey(playerName);
     }
 
-    public ArrayList<String> winRange(int lo, int hi) {
-        ArrayList<String> result = new ArrayList<>();
-        SortedMap<Integer, ArrayList<String>> sub = winTree.subMap(lo, true, hi, true);
-        for (ArrayList<String> players : sub.values()) {
-            result.addAll(players); // Agrega todos directamente
+    public Player[] winRange(int lo, int hi) {
+        ArrayList<Player> result = new ArrayList<>();
+        NavigableMap<Integer, ArrayList<String>> sub = winTree.descendingMap();
+
+        for (Map.Entry<Integer, ArrayList<String>> entry : sub.entrySet()) {
+            int wins = entry.getKey();
+            if (wins <= lo && wins >= hi) {
+                for (String name : entry.getValue()) {
+                    result.add(player.get(name));
+                }
+            }
         }
-        return result;
+
+        return result.toArray(new Player[0]);
     }
 
     public ArrayList<String> winSuccessor(int wins) {
