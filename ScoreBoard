@@ -1,0 +1,87 @@
+import java.util.*;
+
+public class ScoreBoard {
+
+    private TreeMap<Integer,ArrayList<String>> winTree = new TreeMap<>();//podre poner una lista de string
+    private HashMap<String,Player> player = new HashMap();
+    private int playedGame = 0;
+    // gran fallo de este comando es que no se pueden obtener valores repetidos en el caso de que no se ocupara una lista
+    public void addGameResult(String winnerPlayerName, String lossPlayerName, boolean draw){
+
+        registerPlayer(winnerPlayerName);
+        registerPlayer(lossPlayerName);
+
+        Player winner = player.get(winnerPlayerName);
+        Player loser = player.get(lossPlayerName);
+
+        removeFromWinTree(winner);
+        removeFromWinTree(loser);
+
+        if (draw) {
+            winner.addDraw();
+            loser.addDraw();
+        } else {
+            winner.addWin();
+            loser.addLoss();
+        }
+
+        addToWinTree(winner);
+        addToWinTree(loser);
+
+        playedGame++;
+    }
+
+    public void registerPlayer(String playerName){
+        if(!checkPlayer(playerName)){
+            Player newPLayer = new Player(playerName);
+            player.put(playerName, newPLayer);
+            winTree.putIfAbsent(0,new ArrayList<>());
+            winTree.get(0).add(playerName);
+        }else{
+            System.out.println("Player already exists");
+        }
+    }
+
+    public boolean checkPlayer(String playerName){
+        return player.containsKey(playerName);
+    }
+
+    public ArrayList<String> winRange(int lo, int hi) {
+        ArrayList<String> result = new ArrayList<>();
+        SortedMap<Integer, ArrayList<String>> sub = winTree.subMap(lo, true, hi, true);
+        for (ArrayList<String> players : sub.values()) {
+            result.addAll(players); // Agrega todos directamente
+        }
+        return result;
+    }
+
+    public ArrayList<String> winSuccessor(int wins) {
+        ArrayList<String> result = new ArrayList<>();
+        Integer successorKey = winTree.higherKey(wins);
+        if (successorKey != null) {
+            result.addAll(winTree.get(successorKey));
+        }
+        return result;
+    }
+
+    private void removeFromWinTree(Player p) {
+        int wins = p.getWins();
+        ArrayList<String> list = winTree.get(wins);
+        if (list != null) {
+            list.remove(p.getPlayerName());
+            if (list.isEmpty()) {
+                winTree.remove(wins);
+            }
+        }
+    }
+
+    private void addToWinTree(Player p) {
+        int wins = p.getWins();
+        winTree.putIfAbsent(wins, new ArrayList<>());
+        winTree.get(wins).add(p.getPlayerName());
+    }
+
+
+
+
+}
