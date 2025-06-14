@@ -1,15 +1,15 @@
 
 public class Player {
     private String playerName;
-    private int wins = 0;
-    private int draws = 0;
-    private int losses = 0;
+    private int wins;
+    private int draws;
+    private int losses;
 
     Player(String playerName) {
         this.playerName = playerName;
-        this.wins = wins;
-        this.draws = draws;
-        this.losses = losses;
+        this.wins = 0;
+        this.draws = 0;
+        this.losses = 0;
     }
     Player(){}
 
@@ -39,12 +39,9 @@ public class Player {
     public float winRate(){
         float numberOfGames = wins + draws + losses;
         if (numberOfGames != 0) {
-            return (wins / numberOfGames) * 100;
+            return ((float) wins / numberOfGames) * 100;
         }
         return 0;
     }
 
-
-
 }
-
