@@ -1,0 +1,94 @@
+import java.util.Scanner;
+
+public class Game {
+    private String status;
+    private String winnerPlayerName;
+    private String playerNameA;
+    private String playerNameB;
+    private ConnectFour tablero; // Lo dejaré como tablero en vez de connectfour nuevamente
+    //solamente para evitar confusion
+
+
+    public Game(String playerNameA, String playerNameB) {
+        this.playerNameA = playerNameA;
+        this.playerNameB = playerNameB;
+        this.status = "IN_PROGRESS";
+        this.winnerPlayerName = "";
+        this.tablero = new ConnectFour();
+    }
+
+
+    public String play() {
+        Scanner sc = new Scanner(System.in);
+        boolean turnoJugadorA = true;
+
+
+        while (status.equals("IN_PROGRESS")) {
+
+            System.out.println("Mostrando tablero...");
+            tablero.printBoard();
+
+            int col;
+
+
+            if (turnoJugadorA == true) {
+                System.out.println("Le toca al jugador " + playerNameA + ", ingrese su numero de columna");
+                col = sc.nextInt();
+
+                if (col < 0 || col > 6) { // si es menor que 0 o mayor que 6, no es válido //aqui estoy verificando si el movimiento es valido
+
+                    System.out.println("Su numero de columna no coincide con las del tablero");
+                    continue;
+                }
+
+                boolean fueValido = tablero.makeMove(col);
+
+                if (fueValido == false) {    //aqui se me esta avisando que no queda mas espacio en la columna
+                    System.out.println("La columna esta llena");
+                    continue;
+                }
+
+
+            } else {
+                System.out.println("Le toca al jugador " + playerNameB + ", ingrese su numero de columna");
+                col = sc.nextInt();
+
+                if (col < 0 || col > 6) {//aqui estoy verificando si el movimiento es valido
+                    System.out.println("Su numero de columna no coincide con las del tablero");
+                    continue;
+                }
+
+
+                boolean fueValido = tablero.makeMove(col);
+
+                if (fueValido == false) {    //aqui se me esta avisando que no queda mas espacio en la columna
+                    System.out.println("La columna esta llena");
+                    continue;
+                }
+            }
+
+
+            String resultado = tablero.isGameOver();
+
+            if (resultado.equals("X")) { //aqui game over me tiene que decir "X", "O" (es una o mayuscula, no un cero) o "draw" xfa
+                status = "VICTORY";
+                winnerPlayerName = playerNameA;
+                System.out.println("El juego ha terminado. " + playerNameA + " ha ganado, se actualiza su estado a " + status);
+
+            } else if (resultado.equals("O")) { //aqui game over me tiene que decir "X", "O" (es una o mayuscula, no un cero) o "draw" xfa
+                status = "VICTORY";
+                winnerPlayerName = playerNameB;
+                System.out.println("El juego ha terminado. " + playerNameB + " ha ganado, se actualiza su estado a " + status);
+
+            } else if (resultado.equals("draw")) {
+                status = "DRAW";
+                System.out.println("El juego ha terminado en un empate: " + "se actualiza su estado a" + status);
+            } else {
+                turnoJugadorA = !turnoJugadorA;
+            }
+        }
+
+        return winnerPlayerName;
+
+    }
+}
