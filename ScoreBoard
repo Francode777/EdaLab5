@@ -38,8 +38,8 @@ class ScoreBoard {
         if(!checkPlayer(playerName)){
             Player newPLayer = new Player(playerName);
             player.put(playerName, newPLayer);
-            winTree.putIfAbsent(0,new ArrayList<>());
-            winTree.get(0).add(playerName);
+            winTree.putIfAbsent(0,new ArrayList<>());//
+            winTree.get(0).add(playerName); //
         }else{
             System.out.println("Player already exists");
         }
@@ -50,10 +50,16 @@ class ScoreBoard {
     }
 
     public Player[] winRange(int lo, int hi) {
+        
+        if (lo < hi) {
+            System.out.println("Error de intervalos, lo > hi");
+            return new Player[0];
+        }
+        
         ArrayList<Player> result = new ArrayList<>();
-        NavigableMap<Integer, ArrayList<String>> sub = winTree.descendingMap();
-
-        for (Map.Entry<Integer, ArrayList<String>> entry : sub.entrySet()) {
+        NavigableMap<Integer, ArrayList<String>> sub = winTree.descendingMap();//para buscar de mayor a menor
+        //explicar bien el mapa
+        for (Map.Entry<Integer, ArrayList<String>> entry : sub.entrySet()) {//entryset?
             int wins = entry.getKey();
             if (wins <= lo && wins >= hi) {
                 for (String name : entry.getValue()) {
@@ -109,8 +115,8 @@ class Main {
         scoreboard.addGameResult("Charlie", "Bob", false);  // Charlie gana
 
         System.out.println("\nJugadores con entre 1 y 2 victorias:");
-        for (String name : scoreboard.winRange(1, 2)) {
-            System.out.println("- " + name);
+        for (Player name : scoreboard.winRange(2, 1)) {
+            System.out.println("- " + name.getPlayerName());
         }
 
         System.out.println("\nJugadores con más victorias que 1:");
