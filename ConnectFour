@@ -21,7 +21,7 @@ public class ConnectFour {
 
     public boolean makeMove(int z) {
         if (z < 0 || z > 6)
-            return false; //verifica si la coordenada sea valida
+            return false; //verifica si la coordenada es valida
 
         for (int fila = 5; fila >= 0; fila--) {
             if (grid[z][fila] == ' ') {
