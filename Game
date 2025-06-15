@@ -74,11 +74,13 @@ public class Game {
                 status = "VICTORY";
                 winnerPlayerName = playerNameA;
                 System.out.println("El juego ha terminado. " + playerNameA + " ha ganado, se actualiza su estado a " + status);
+                tablero.printBoard();
 
             } else if (resultado.equals("O")) { //aqui game over me tiene que decir "X", "O" (es una o mayuscula, no un cero) o "draw" xfa
                 status = "VICTORY";
                 winnerPlayerName = playerNameB;
                 System.out.println("El juego ha terminado. " + playerNameB + " ha ganado, se actualiza su estado a " + status);
+                tablero.printBoard();
 
             } else if (resultado.equals("draw")) {
                 status = "DRAW";
