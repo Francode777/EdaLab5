@@ -1,21 +1,113 @@
-public class ConnectFour { ///agregue este metodo de la tabla pq sirve para Game
+public class ConnectFour {
 
-    private char[][] tabla;
+    private char[][] grid;
+    private char currentSymbol;
 
     public ConnectFour() {
-        tabla = new char[7][6];
+        this.currentSymbol = 'X';
+
+        grid = new char[7][6];
         for (int col = 0; col < 7; col++) {
             for (int fila = 0; fila < 6; fila++) {
-                tabla[col][fila] = ' ';
+                grid[col][fila] = ' ';
             }
         }
     }
 
-    public void mostrarTabla() {
+    public char getCurrentSymbol() {
+        return currentSymbol;
+
+    }
+
+    public boolean makeMove(int z) {
+        if (z < 0 || z > 6)
+            return false; //verifica si la coordenada sea valida
+
+        for (int fila = 5; fila >= 0; fila--) {
+            if (grid[z][fila] == ' ') {
+                grid[z][fila] = currentSymbol;
+                if (currentSymbol == 'X') {
+                    currentSymbol = 'O';
+                } else {
+                    currentSymbol = 'X';
+
+                }
+                return true;
+            }
+        }
+        return false; //la columna esta llena, no se realiza el mov
+    }
+public String isGameOver() {
+//verificar horizontalmente
+    for (int fila = 0; fila < 6; fila++) {
+        for (int col = 0; col <= 3; col++) {
+            char symbol = grid[col][fila];
+            if (symbol != ' ' && symbol == grid[col + 1][fila] && symbol == grid[col + 2][fila] &&
+                    symbol == grid[col + 3][fila]) {
+                System.out.println("Ganador horizontal: " + symbol + " en (" + col + "," + fila + ")");
+                return String.valueOf(symbol);
+            }
+        }
+    }
+
+    //verificar verticalmente
+    for (int fila = 0; fila <=2; fila++) {
+        for (int col = 0; col < 7; col++) {
+            char symbol = grid[col][fila];
+            if (symbol != ' ' && symbol == grid[col][fila+1] && symbol == grid[col][fila+2] &&
+                    symbol == grid[col][fila+3]) {
+                System.out.println("Ganador vertical: " + symbol + " en (" + col + "," + fila + ")");
+                return String.valueOf(symbol);
+
+
+            }
+        }
+    }
+
+    //verificar diagonalmente descendente
+    for (int fila = 0; fila <=2; fila++) {
+    for (int col = 0; col <=3; col++) {
+        char symbol = grid[col][fila];
+        if (symbol != ' ' && symbol == grid[col+1][fila+1] && symbol == grid[col+2][fila+2] &&
+                symbol == grid[col+3][fila+3]) {
+            System.out.println("Ganador diagonal descendente: " + symbol + " en (" + col + "," + fila + ")");
+            return String.valueOf(symbol);
+      }
+     }
+    }
+    //verificar diagonalmente ascendente
+    for (int fila = 3; fila <6; fila++) {
+        for (int col = 0; col <=3; col++) {
+            char symbol = grid[col][fila];
+            if (symbol != ' ' && symbol == grid[col+1][fila-1] && symbol == grid[col+2][fila-2] &&
+                    symbol == grid[col+3][fila-3]) {
+                System.out.println("Ganador diagonal ascendente: " + symbol + " en (" + col + "," + fila + ")");
+                return String.valueOf(symbol);
+            }
+        }
+    }
+
+    //empate
+    boolean fullBoard = true;
+    for (int fila = 0; fila < 6; fila++) {
+        for (int col = 0; col < 7; col++) {
+            if (grid[col][fila] == ' ') {
+                fullBoard = false;
+            }
+        }
+    }
+    if (fullBoard) { //si el tablero esta lleno es empate
+        return "draw";
+
+    }
+    return "continue";
+
+}
+    public void printBoard() {
         for (int fila = 0; fila < 6; fila++) {
             System.out.print("|");
             for (int col = 0; col < 7; col++) {
-                System.out.print(tabla[col][fila]);
+                System.out.print(grid[col][fila]);
                 System.out.print("|");
             }
             System.out.println();
