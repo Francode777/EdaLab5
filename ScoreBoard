@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.Scanner;
+import java.util.Scanner;
 
 class ScoreBoard {
     private TreeMap<Integer,ArrayList<String>> winTree = new TreeMap<>();//podre poner una lista de string
@@ -6,9 +8,9 @@ class ScoreBoard {
     private int playedGame = 0;
 
     // gran fallo de este comando es que no se pueden obtener valores repetidos en el caso de que no se ocupara una lista
-    
+
     ScoreBoard(){}
-    
+
     public void addGameResult(String winnerPlayerName, String lossPlayerName, boolean draw){
 
         registerPlayer(winnerPlayerName);
@@ -101,7 +103,32 @@ class ScoreBoard {
 }
 class Main {
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Introduzca el nombre del primer jugador(X)");
+        String playerNameA = sc.nextLine();
+
+        System.out.println("Introduzca el nombre del segundo jugador(O)");
+        String playerNameB = sc.nextLine();
+
+        Game game = new Game(playerNameA, playerNameB);
+        String winner = game.play();
+
+        System.out.println("Fin de la partida");
+        if(winner.isEmpty()){
+            System.out.println("La partida terminó en empate");
+        }else{
+            System.out.println("El ganador de la partida es: " + winner);
+        }
+
         ScoreBoard scoreboard = new ScoreBoard();
+
+        boolean isDraw = winner.isEmpty();
+        String looser = "";
+        if(!isDraw){
+            looser = (winner.equals(playerNameA))? playerNameB: playerNameA;
+        }
+        scoreboard.addGameResult(winner,looser,isDraw);
 
         scoreboard.addGameResult("Alice", "Bob", false);    // Alice gana
         scoreboard.addGameResult("Alice", "Charlie", true); // Empate
@@ -121,5 +148,7 @@ class Main {
 
         System.out.println("\nEstado completo del ScoreBoard:");
         scoreboard.printPlayers();
+        sc.close();
     }
 }
+
