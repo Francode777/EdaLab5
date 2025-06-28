@@ -1,154 +1,81 @@
-import java.util.*;
-import java.util.Scanner;
-import java.util.Scanner;
+import java.util.ArrayList;
 
-class ScoreBoard {
-    private TreeMap<Integer,ArrayList<String>> winTree = new TreeMap<>();//podre poner una lista de string
-    private HashMap<String,Player> player = new HashMap();
+public class ScoreBoard {
+    private BST winTree = new BST();
+    private HashST player = new HashST();
     private int playedGame = 0;
 
-    // gran fallo de este comando es que no se pueden obtener valores repetidos en el caso de que no se ocupara una lista
+    public void addGameResult(String ganador, String perdedor, boolean empate) {
+        registerPlayer(ganador);
+        registerPlayer(perdedor);
 
-    ScoreBoard(){}
+        Player a = player.obtener(ganador);
+        Player b = player.obtener(perdedor);
 
-    public void addGameResult(String winnerPlayerName, String lossPlayerName, boolean draw){
+        eliminarJugador(a);
+        eliminarJugador(b);
 
-        registerPlayer(winnerPlayerName);
-        registerPlayer(lossPlayerName);
-
-        Player winner = player.get(winnerPlayerName);
-        Player loser = player.get(lossPlayerName);
-
-        removeFromWinTree(winner);
-        removeFromWinTree(loser);
-
-        if (draw) {
-            winner.addDraw();
-            loser.addDraw();
+        if (empate) {
+            a.addDraw();
+            b.addDraw();
         } else {
-            winner.addWin();
-            loser.addLoss();
+            a.addWin();
+            b.addLoss();
         }
 
-        addToWinTree(winner);
-        addToWinTree(loser);
-
+        agregarJugador(a);
+        agregarJugador(b);
         playedGame++;
     }
 
-    public void registerPlayer(String playerName){
-        if(!checkPlayer(playerName)){
-            Player newPlayer = new Player(playerName);
-            player.put(playerName, newPlayer);
-            winTree.putIfAbsent(0,new ArrayList<>());//
-            winTree.get(0).add(playerName); //
-        }else{
-            System.out.println("Player already exists");
+    public void registerPlayer(String nombre) {
+        if (!player.contiene(nombre)) {
+            Player nuevo = new Player(nombre);
+            player.agregar(nombre, nuevo);
+            winTree.insertar(0, nombre);
         }
     }
 
-    public boolean checkPlayer(String playerName){
-        return player.containsKey(playerName);
+    public boolean checkPlayer(String nombre) {
+        return player.contiene(nombre);
     }
 
-    public Player[] winRange(int minWins, int maxWins) {
-        if (minWins < maxWins) {
-            System.out.println("Error de intervalos, minWins > maxWins");
+    private void eliminarJugador(Player p) {
+        winTree.eliminar(p.getWins(), p.getPlayerName());
+    }
+
+    private void agregarJugador(Player p) {
+        winTree.insertar(p.getWins(), p.getPlayerName());
+    }
+
+    public Player[] winRange(int max, int min) {
+        if (max < min) {
+            System.out.println("Error de rangos");
             return new Player[0];
         }
-        ArrayList<Player> result = new ArrayList<>();
-        Map<Integer, ArrayList<String>> sub = winTree;
-        for (Map.Entry<Integer, ArrayList<String>> entry : sub.entrySet()) {
-            int wins = entry.getKey();
-            if (wins <= minWins && wins >= maxWins) {
-                for (String name : entry.getValue()) {
-                    result.add(player.get(name));
-                }
+        ArrayList<Player> resultado = new ArrayList<>();
+        ArrayList<Integer> claves = winTree.clavesEntre(min, max);
+        for (int w : claves) {
+            ArrayList<String> nombres = winTree.obtener(w);
+            for (String n : nombres) {
+                resultado.add(player.obtener(n));
             }
         }
-        return result.toArray(new Player[0]);
+        return resultado.toArray(new Player[0]);
     }
 
     public ArrayList<String> winSuccessor(int wins) {
-        ArrayList<String> result = new ArrayList<>();
-        Integer successorKey = winTree.higherKey(wins);
-        if (successorKey != null) {
-            result.addAll(winTree.get(successorKey));
+        ArrayList<String> lista = new ArrayList<>();
+        Integer siguiente = winTree.sucesor(wins);
+        if (siguiente != null) {
+            lista.addAll(winTree.obtener(siguiente));
         }
-        return result;
-    }
-
-    private void addToWinTree(Player p) {
-        int wins = p.getWins();
-        winTree.putIfAbsent(wins, new ArrayList<>());
-        winTree.get(wins).add(p.getPlayerName());
-    }
-
-    private void removeFromWinTree(Player p) {
-        int wins = p.getWins();
-        ArrayList<String> list = winTree.get(wins);
-        if (list != null) {
-            list.remove(p.getPlayerName());
-            if (list.isEmpty()) {
-                winTree.remove(wins);
-            }
-        }
+        return lista;
     }
 
     public void printPlayers() {
-        for (Player p : player.values()) {
+        for (Player p : player.todos()) {
             System.out.println(p.getPlayerName() + " → Wins: " + p.getWins() + ", Draws: " + p.getDraws() + ", Losses: " + p.getLosses());
         }
     }
 }
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-
-        System.out.println("Introduzca el nombre del primer jugador(X)");
-        String playerNameA = sc.nextLine();
-
-        System.out.println("Introduzca el nombre del segundo jugador(O)");
-        String playerNameB = sc.nextLine();
-
-        Game game = new Game(playerNameA, playerNameB);
-        String winner = game.play();
-
-        System.out.println("Fin de la partida");
-        if(winner.isEmpty()){
-            System.out.println("La partida terminó en empate");
-        }else{
-            System.out.println("El ganador de la partida es: " + winner);
-        }
-
-        ScoreBoard scoreboard = new ScoreBoard();
-
-        boolean isDraw = winner.isEmpty();
-        String looser = "";
-        if(!isDraw){
-            looser = (winner.equals(playerNameA))? playerNameB: playerNameA;
-        }
-        scoreboard.addGameResult(winner,looser,isDraw);
-
-        scoreboard.addGameResult("Alice", "Bob", false);    // Alice gana
-        scoreboard.addGameResult("Alice", "Charlie", true); // Empate
-        scoreboard.addGameResult("Bob", "Charlie", false);  // Bob gana
-        scoreboard.addGameResult("Alice", "Bob", false);    // Alice gana de nuevo
-        scoreboard.addGameResult("Charlie", "Bob", false);  // Charlie gana
-
-        System.out.println("\nJugadores con entre 1 y 2 victorias:");
-        for (Player name : scoreboard.winRange(2, 1)) {
-            System.out.println("- " + name.getPlayerName());
-        }
-
-        System.out.println("\nJugadores con más victorias que 1:");
-        for (String name : scoreboard.winSuccessor(1)) {
-            System.out.println("- " + name);
-        }
-
-        System.out.println("\nEstado completo del ScoreBoard:");
-        scoreboard.printPlayers();
-        sc.close();
-    }
-}
-
