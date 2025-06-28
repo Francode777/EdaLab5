@@ -1,0 +1,31 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ScoreBoard scoreBoard = new ScoreBoard();
+
+        String jugador1 = "Francisco";
+        String jugador2 = "Guliano";
+
+
+        scoreBoard.registerPlayer(jugador1);
+        scoreBoard.registerPlayer(jugador2);
+
+
+        Game game = new Game(jugador1, jugador2);
+        String ganador = game.play(); 
+
+        if (ganador.equals("")) {
+            System.out.println("Registrando empate...");
+            scoreBoard.addGameResult(jugador1, jugador2, true);
+        } else if (ganador.equals(jugador1)) {
+            scoreBoard.addGameResult(jugador1, jugador2, false);
+        } else if (ganador.equals(jugador2)) {
+            scoreBoard.addGameResult(jugador2, jugador1, false);
+        }
+
+        System.out.println("\n--- ScoreBoard Actualizado ---");
+        scoreBoard.printPlayers();
+    }
+}
