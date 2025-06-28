@@ -1,0 +1,109 @@
+import java.util.ArrayList;
+
+public class BST {
+    class Nodo {
+        int clave;
+        ArrayList<String> jugadores;
+        Nodo izq, der;
+
+        Nodo(int clave, String nombre) {
+            this.clave = clave;
+            jugadores = new ArrayList<>();
+            jugadores.add(nombre);
+        }
+    }
+
+    Nodo raiz;
+
+    public void insertar(int clave, String nombre) {
+        raiz = insertar(raiz, clave, nombre);
+    }
+
+    private Nodo insertar(Nodo nodo, int clave, String nombre) {
+        if (nodo == null) return new Nodo(clave, nombre);
+        if (clave < nodo.clave) {
+            nodo.izq = insertar(nodo.izq, clave, nombre);
+        } else if (clave > nodo.clave) {
+            nodo.der = insertar(nodo.der, clave, nombre);
+        } else {
+            nodo.jugadores.add(nombre);
+        }
+        return nodo;
+    }
+
+    public ArrayList<String> obtener(int clave) {
+        Nodo actual = raiz;
+        while (actual != null) {
+            if (clave < actual.clave) {
+                actual = actual.izq;
+            } else if (clave > actual.clave) {
+                actual = actual.der;
+            } else {
+                return actual.jugadores;
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    public void eliminar(int clave, String nombre) {
+        raiz = eliminar(raiz, clave, nombre);
+    }
+
+    private Nodo eliminar(Nodo nodo, int clave, String nombre) {
+        if (nodo == null) return null;
+        if (clave < nodo.clave) {
+            nodo.izq = eliminar(nodo.izq, clave, nombre);
+        } else if (clave > nodo.clave) {
+            nodo.der = eliminar(nodo.der, clave, nombre);
+        } else {
+            nodo.jugadores.remove(nombre);
+            if (nodo.jugadores.isEmpty()) {
+                if (nodo.izq == null) return nodo.der;
+                if (nodo.der == null) return nodo.izq;
+                Nodo temp = nodo;
+                nodo = minimo(temp.der);
+                nodo.der = eliminarMin(temp.der);
+                nodo.izq = temp.izq;
+            }
+        }
+        return nodo;
+    }
+
+    private Nodo minimo(Nodo nodo) {
+        while (nodo.izq != null) nodo = nodo.izq;
+        return nodo;
+    }
+
+    private Nodo eliminarMin(Nodo nodo) {
+        if (nodo.izq == null) return nodo.der;
+        nodo.izq = eliminarMin(nodo.izq);
+        return nodo;
+    }
+
+    public Integer sucesor(int clave) {
+        Nodo actual = raiz;
+        Integer siguiente = null;
+        while (actual != null) {
+            if (clave < actual.clave) {
+                siguiente = actual.clave;
+                actual = actual.izq;
+            } else {
+                actual = actual.der;
+            }
+        }
+        return siguiente;
+    }
+
+    public ArrayList<Integer> clavesEntre(int desde, int hasta) {
+        ArrayList<Integer> lista = new ArrayList<>();
+        buscarEnRango(raiz, desde, hasta, lista);
+        return lista;
+    }
+
+    private void buscarEnRango(Nodo nodo, int desde, int hasta, ArrayList<Integer> lista) {
+        if (nodo == null) return;
+        if (desde < nodo.clave) buscarEnRango(nodo.izq, desde, hasta, lista);
+        if (desde <= nodo.clave && nodo.clave <= hasta) lista.add(nodo.clave);
+        if (hasta > nodo.clave) buscarEnRango(nodo.der, desde, hasta, lista);
+    }
+}
