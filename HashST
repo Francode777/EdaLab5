@@ -1,0 +1,63 @@
+import java.util.ArrayList;
+
+public class HashST {
+    class Entrada {
+        String clave;
+        Player valor;
+
+        Entrada(String clave, Player valor) {
+            this.clave = clave;
+            this.valor = valor;
+        }
+    }
+
+    private int capacidad = 16;
+    private ArrayList<Entrada>[] tabla;
+
+    @SuppressWarnings("unchecked")
+    public HashST() {
+        tabla = new ArrayList[capacidad];
+        for (int i = 0; i < capacidad; i++) {
+            tabla[i] = new ArrayList<>();
+        }
+    }
+
+    private int hash(String clave) {
+        return (clave.hashCode() & 0x7fffffff) % capacidad;
+    }
+
+    public void agregar(String clave, Player valor) {
+        int i = hash(clave);
+        for (Entrada e : tabla[i]) {
+            if (e.clave.equals(clave)) {
+                e.valor = valor;
+                return;
+            }
+        }
+        tabla[i].add(new Entrada(clave, valor));
+    }
+
+    public Player obtener(String clave) {
+        int i = hash(clave);
+        for (Entrada e : tabla[i]) {
+            if (e.clave.equals(clave)) {
+                return e.valor;
+            }
+        }
+        return null;
+    }
+
+    public boolean contiene(String clave) {
+        return obtener(clave) != null;
+    }
+
+    public ArrayList<Player> todos() {
+        ArrayList<Player> lista = new ArrayList<>();
+        for (int i = 0; i < capacidad; i++) {
+            for (Entrada e : tabla[i]) {
+                lista.add(e.valor);
+            }
+        }
+        return lista;
+    }
+}
